@@ -1,29 +1,4 @@
 services:
-  nginx:
-    build:
-      context: .
-      dockerfile: ./nginx/Dockerfile
-    restart: unless-stopped
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - ./front/dist:/usr/share/nginx/html:ro
-      - ./nginx/video-chat.conf:/etc/nginx/conf.d/default.conf:ro
-      - ./certbot/conf:/etc/letsencrypt:ro
-      - ./certbot/www:/var/www/certbot:ro
-    networks:
-      - videochat
-    depends_on:
-      - sfu
-
-  certbot:
-    build: ./certbot
-    profiles: ["certbot"]
-    volumes:
-      - ./certbot/conf:/etc/letsencrypt
-      - ./certbot/www:/var/www/certbot
-
   sfu:
     build: ./sfu
     restart: unless-stopped
@@ -32,7 +7,8 @@ services:
       - "3000:3000"
       - "10000-10100:10000-10100/udp"
     networks:
-      - videochat
+      - voice-with-me-network
+      - nginx-proxy
 
   turn:
     build: ./turn
@@ -47,5 +23,7 @@ volumes:
   turn-logs:
 
 networks:
-  videochat:
+  voice-with-me-network:
     driver: bridge
+  nginx-proxy:
+    external: true

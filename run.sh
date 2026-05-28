@@ -5,9 +5,12 @@ set -e
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 # ──────────────────────────────────────────────
 
-echo "=== voice-with-me 서비스 종료 ==="
-cd "${SCRIPT_DIR}"
-docker compose down
+docker compose up -d --build
 
 echo ""
-echo "모든 서비스가 종료되었습니다."
+docker compose ps
+
+echo ""
+echo "완료!"
+echo "  SFU 로그:   docker compose logs -f sfu"
+echo "  TURN 로그:  docker compose logs -f turn"
